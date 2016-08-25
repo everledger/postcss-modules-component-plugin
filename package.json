@@ -1,8 +1,8 @@
 {
-  "name": "postcss-modules-component-loader",
+  "name": "postcss-modules-component-plugin",
   "version": "1.0.0",
   "private": true,
-  "description": "A Webpack loader to provide connectivity between `postcss-modules` JSON output and React (or other) component classNames",
+  "description": "A Webpack plugin to provide connectivity between `postcss-modules` JSON output and React (or other) component classNames",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
