@@ -41,73 +41,75 @@ This module allows you to achieve this, so that a class of `.currentElement` in 
 
 Simply make the following additions to your webpack config. Note the configuration is setup for use with an `.scss` file extension but you can import `css`, `less`, `pcss` or whatever you want so long as you have the rest of your [postcss](https://github.com/postcss/postcss) plugins configured to deal with them.
 
-    const loaderUtils = require('loader-utils');
-    const postCSSModuleComponents = require('postcss-modules-component-plugin');
+```javascript
+const loaderUtils = require('loader-utils');
+const postCSSModuleComponents = require('postcss-modules-component-plugin');
 
-    // optional:
+// optional:
 
-    postCSSModuleComponents.setLocalModuleNameFormat('[name][emoji]_[localName]_[hash:base64:5]');
-    postCSSModuleComponents.setGlobalModulesWhitelist([
-      /\/node_modules\//,               // <-- this is the default
-      /src\/views\/globalView\.scss$/,
-    ]);
+postCSSModuleComponents.setLocalModuleNameFormat('[name][emoji]_[localName]_[hash:base64:5]');
+postCSSModuleComponents.setGlobalModulesWhitelist([
+  /\/node_modules\//,               // <-- this is the default
+  /src\/views\/globalView\.scss$/,
+]);
 
-    //...
+//...
 
-    const moduleLoaderPlugin = postcssModules({
-      generateScopedName: postCSSModuleComponents.scopedName,
-      getJSON: postCSSModuleComponents.writer,
-    });
+const moduleLoaderPlugin = postcssModules({
+  generateScopedName: postCSSModuleComponents.scopedName,
+  getJSON: postCSSModuleComponents.writer,
+});
 
-    //...
+//...
 
-    module.exports = {
-        
-      //...   
+module.exports = {
+    
+  //...   
 
-      module: {
+  module: {
+    loaders: [
+
+      //...
+
+      {
+        test: /\.(scss)$/,  // or whichever
+        exclude: [/\/node_modules/],
         loaders: [
-
-          //...
-
-          {
-            test: /\.(scss)$/,  // or whichever
-            exclude: [/\/node_modules/],
-            loaders: [
-              { loader: 'style-loader' },
-              { loader: postCSSModuleComponents.loader() },
-              { loader: 'css-loader', query: { sourceMap: true, importLoaders: 1 } },
-              { loader: 'postcss-loader' },
-            ],
-          },
-
-          //...
-
-        ]
+          { loader: 'style-loader' },
+          { loader: postCSSModuleComponents.loader() },
+          { loader: 'css-loader', query: { sourceMap: true, importLoaders: 1 } },
+          { loader: 'postcss-loader' },
+        ],
       },
 
       //...
 
-      postcss: function(webpack) {
-        return {
-          plugins: [
-            // :IMPORTANT: must be first
-            partialImport({
-              extension: 'scss',
-              addDependencyTo: webpack,
-              plugins: [moduleLoaderPlugin],
-            }),
-            moduleLoaderPlugin,
+    ]
+  },
 
-            //...
+  //...
 
-          ],
-        };
-      },
+  postcss: function(webpack) {
+    return {
+      plugins: [
+        // :IMPORTANT: must be first
+        partialImport({
+          extension: 'scss',
+          addDependencyTo: webpack,
+          plugins: [moduleLoaderPlugin],
+        }),
+        moduleLoaderPlugin,
 
-      //...
+        //...
 
+      ],
     };
+  },
+
+  //...
+
+};
+```
 
 Note that `moduleLoaderPlugin` appears **TWICE** in the `postcss` plugin definition. This is very important- the plugin needs to run over modules *before* flattening partials, as well as over the final compiled module before continuing.
 
