@@ -36,6 +36,23 @@ function getLoaderName() {
 }
 
 
+// configuration to allow overriding list of global module path regexes
+
+const globalModulePaths = [/\/node_modules\//];
+
+function setGlobalModulePaths(paths) {
+    if (!Array.isArray(paths)) {
+        paths = [paths];
+    }
+}
+
+let localModuleNameFormat = '[name][emoji]_[localName]_[hash:base64:5]';
+
+function setLocalModuleNameFormat(newFormat) {
+    localModuleNameFormat = newFormat;
+}
+
+
 // provide a function for handling name scoping...
 
 const SELECTORS_ENCOUNTERED_GLOBALLY = {};
@@ -49,7 +66,8 @@ function scopedName(name, filename, css) {
 
   // In partials:
   // use global selectors within node_modules folder
-  if (filename.match(/\/node_modules\//)) {
+  let isGlobal = false;
+  if (globalModulePaths.filter(regex => isGlobal || (isGlobal = filename.match(regex))).length !== 0) {
     SELECTORS_ENCOUNTERED_GLOBALLY[name] = true;
     return name;
   } else if (SELECTORS_ENCOUNTERED_GLOBALLY[name]) {
@@ -60,7 +78,7 @@ function scopedName(name, filename, css) {
   // use local selectors for app code by default
   return loaderUtils.interpolateName(
     { resourcePath: filename },
-    `[name][emoji]_${name}_[hash:base64:5]`,
+    localModuleNameFormat.replace(/\[localName\]/g, name),
     { content: css }
   );
 }
@@ -79,5 +97,7 @@ function Loader(source) {
 Loader.loader = getLoaderName;
 Loader.writer = setFileJSON;
 Loader.scopedName = scopedName;
+Loader.setGlobalModulesWhitelist = setGlobalModulePaths;
+Loader.setLocalModuleNameFormat = setLocalModuleNameFormat;
 
 module.exports = Loader;
