@@ -2,7 +2,7 @@ This module provides linkage between [postcss-modules](https://github.com/css-mo
 
 You will find this very useful if you wish to create component-oriented [style modules](https://github.com/css-modules/css-modules#css-modules) that you can import directly from your JavaScript modules; and *also* easily share code with external libraries.
 
-*But be warned*, this module is a dirty hack around various limitations in `css-loader`, `postcss-modules` and Webpack, and will probably go away once one of these tools / ecosystems evolves to a sufficient featureset. It was created out of frustration after many hours of head-banging &mdash; so if you're reading this thinking, "this sounds dumb...", then please open an issue explaining to me how to get these things working the *right* way.
+*But be warned*, this module is a dirty hack around various limitations in `css-loader`, `postcss-modules`, `postcss-import` and Webpack, and will probably go away once one of these tools / ecosystems evolves to a sufficient featureset. It was created out of frustration after many hours of head-banging &mdash; so if you're reading this thinking, "this sounds dumb...", then please open an issue explaining to me how to get these things working the *right* way.
 
 
 ### What it does
