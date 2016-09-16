@@ -31,8 +31,13 @@ function getFileJSON(cssFileName) {
 
 const loaderName = require.resolve("./");
 
-function getLoaderName() {
-    return loaderName;
+function getLoaderName(exportAs) {
+    if (exportAs === 'cjs' || exportAs === 'commonjs') {
+        exportAs = 'module.exports = ';
+    } else if (exportAs === 'es6') {
+        exportAs = 'export default ';
+    }
+    return loaderName + (exportAs ? `?{"exportFormat":"${exportAs}"}` : '');
 }
 
 
@@ -87,8 +92,11 @@ function scopedName(name, filename, css) {
 // Main loader entrypoint (injects JSON onto `css-loader` output)
 
 function Loader(source) {
+    const query = this.query ? JSON.parse(this.query.replace(/^\?/, '')) : {
+        exportFormat: 'exports.locals = ',  // use CSS module export format by default
+    };
     this.cacheable();
-    return source + "\nexports.locals = " + JSON.stringify(getFileJSON(this.resourcePath)) + ';';
+    return source + "\n" + query.exportFormat + JSON.stringify(getFileJSON(this.resourcePath)) + ';';
 }
 
 
