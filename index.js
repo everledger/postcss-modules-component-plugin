@@ -84,7 +84,7 @@ function scopedName(name, filename, css) {
   return loaderUtils.interpolateName(
     { resourcePath: filename },
     localModuleNameFormat.replace(/\[localName\]/g, name),
-    { content: css.substring(css.indexOf('.' + name)) }
+    { content: css.substring(css.search(new RegExp('.' + name + '\\b'))) }
   );
 }
 
