@@ -43,12 +43,13 @@ function getLoaderName(exportAs) {
 
 // configuration to allow overriding list of global module path regexes
 
-const globalModulePaths = [/\/node_modules\//];
+let globalModulePaths = [/\/node_modules\//];
 
 function setGlobalModulePaths(paths) {
     if (!Array.isArray(paths)) {
         paths = [paths];
     }
+    globalModulePaths = paths;
 }
 
 let localModuleNameFormat = '[name][emoji]_[localName]_[hash:base64:5]';
